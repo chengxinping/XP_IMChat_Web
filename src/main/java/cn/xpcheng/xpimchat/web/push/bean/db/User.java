@@ -62,7 +62,7 @@ public class User {
     //定义为更新时间戳 更新时写入
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime uodateAt = LocalDateTime.now();
+    private LocalDateTime updateAt = LocalDateTime.now();
 
     //最后一次收到消息的时间
     @Column
@@ -163,12 +163,12 @@ public class User {
         this.createAt = createAt;
     }
 
-    public LocalDateTime getUodateAt() {
-        return uodateAt;
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
     }
 
-    public void setUodateAt(LocalDateTime uodateAt) {
-        this.uodateAt = uodateAt;
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
     public LocalDateTime getLastReceiveAt() {

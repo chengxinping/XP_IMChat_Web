@@ -57,7 +57,7 @@ public class UserFollow {
     //定义为更新时间戳 更新时写入
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime uodateAt = LocalDateTime.now();
+    private LocalDateTime updateAt = LocalDateTime.now();
 
 
     public String getId() {
@@ -116,11 +116,11 @@ public class UserFollow {
         this.createAt = createAt;
     }
 
-    public LocalDateTime getUodateAt() {
-        return uodateAt;
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
     }
 
-    public void setUodateAt(LocalDateTime uodateAt) {
-        this.uodateAt = uodateAt;
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 }
