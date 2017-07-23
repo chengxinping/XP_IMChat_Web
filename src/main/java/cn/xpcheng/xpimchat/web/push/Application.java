@@ -1,5 +1,6 @@
 package cn.xpcheng.xpimchat.web.push;
 
+import cn.xpcheng.xpimchat.web.push.provider.GsonProvider;
 import cn.xpcheng.xpimchat.web.push.service.AccountService;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,7 +17,9 @@ public class Application extends ResourceConfig {
         packages(AccountService.class.getPackage().getName());
 
         // 注册Json解析器
-        register(JacksonJsonProvider.class);
+//        register(JacksonJsonProvider.class);
+        //替换解析器
+        register(GsonProvider.class);
 
         // 注册日志打印输出
         register(Logger.class);
