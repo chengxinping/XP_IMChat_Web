@@ -123,7 +123,7 @@ public class ResponseModel<M> implements Serializable {
     }
 
     public static <M> ResponseModel<M> buildParameterError() {
-        return new ResponseModel<M>(ERROR_PARAMETERS, "Parameters Error.");
+        return new ResponseModel<M>(ERROR_PARAMETERS, "参数异常！");
     }
 
     public static <M> ResponseModel<M> buildHaveAccountError() {
@@ -135,7 +135,7 @@ public class ResponseModel<M> implements Serializable {
     }
 
     public static <M> ResponseModel<M> buildServiceError() {
-        return new ResponseModel<M>(ERROR_SERVICE, "Service Error.");
+        return new ResponseModel<M>(ERROR_SERVICE, "服务器异常！");
     }
 
     public static <M> ResponseModel<M> buildNotFoundUserError(String str) {
@@ -151,11 +151,11 @@ public class ResponseModel<M> implements Serializable {
     }
 
     public static <M> ResponseModel<M> buildAccountError() {
-        return new ResponseModel<M>(ERROR_ACCOUNT_TOKEN, "Account Error; you need login.");
+        return new ResponseModel<M>(ERROR_ACCOUNT_TOKEN, "账户异常，请重试！");
     }
 
     public static <M> ResponseModel<M> buildLoginError() {
-        return new ResponseModel<M>(ERROR_ACCOUNT_LOGIN, "Account or password error.");
+        return new ResponseModel<M>(ERROR_ACCOUNT_LOGIN, "账号或密码错误！");
     }
 
     public static <M> ResponseModel<M> buildRegisterError() {
