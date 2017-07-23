@@ -83,6 +83,14 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UserFollow> followers = new HashSet<>();
 
+
+    //我所有创建的群  对应字段为group中的ownerId
+    @JoinColumn(name = "ownerId")
+    //懒加载集合 当访问group.size()也不加载具体信息，只有遍历才加载
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Group> groups = new HashSet<>();
+
     public String getId() {
         return id;
     }
@@ -193,5 +201,13 @@ public class User {
 
     public void setFollowers(Set<UserFollow> followers) {
         this.followers = followers;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 }
