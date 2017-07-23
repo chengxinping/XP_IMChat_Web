@@ -1,11 +1,11 @@
 package cn.xpcheng.xpimchat.web.push.service;
 
+import cn.xpcheng.xpimchat.web.push.bean.api.account.RegisterModel;
+import cn.xpcheng.xpimchat.web.push.bean.card.UserCard;
 import cn.xpcheng.xpimchat.web.push.bean.db.User;
+import cn.xpcheng.xpimchat.web.push.factory.UserFactory;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -16,24 +16,35 @@ import javax.ws.rs.core.MediaType;
 //实际访问路径  127.0.0.1/api/account
 @Path("/account")
 public class AccountService {
-    //GET 127.0.0.1/api/account/login
-    @GET
-    @Path("/login")
-    public String get() {
-        return "My First Restful:Login";
-    }
 
-    //POST 127.0.0.1/api/account/login
     @POST
-    @Path("/login")
+    @Path("/register")
     //传入
     @Consumes(MediaType.APPLICATION_JSON)
-    //返回
-
-    public User post() {
-        User user = new User();
-        user.setName("哎呦哥哥");
-        user.setSex(1);
-        return user;
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserCard register(RegisterModel model) {
+        User user = UserFactory.findByPhone(model.getAccount().trim());
+        if (user != null) {
+            UserCard card = new UserCard();
+            card.setName("该手机号已被注册！");
+            return card;
+        }
+        user = UserFactory.findByName(model.getName().trim());
+        if (user != null) {
+            UserCard card = new UserCard();
+            card.setName("该昵称已被占用！");
+            return card;
+        }
+        user = UserFactory.register(model.getAccount(), model.getPassword(), model.getName());
+        if (user != null) {
+            UserCard card = new UserCard();
+            card.setName(user.getName());
+            card.setPhone(user.getPhone());
+            card.setSex(user.getSex());
+            card.setNotifyAt(user.getUpdateAt());
+            card.setFollow(true);
+            return card;
+        }
+        return null;
     }
 }
