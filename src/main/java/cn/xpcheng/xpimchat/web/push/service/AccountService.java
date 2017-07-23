@@ -1,6 +1,8 @@
 package cn.xpcheng.xpimchat.web.push.service;
 
+import cn.xpcheng.xpimchat.web.push.bean.api.account.AccountRspModel;
 import cn.xpcheng.xpimchat.web.push.bean.api.account.RegisterModel;
+import cn.xpcheng.xpimchat.web.push.bean.api.base.ResponseModel;
 import cn.xpcheng.xpimchat.web.push.bean.card.UserCard;
 import cn.xpcheng.xpimchat.web.push.bean.db.User;
 import cn.xpcheng.xpimchat.web.push.factory.UserFactory;
@@ -22,29 +24,23 @@ public class AccountService {
     //传入
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public UserCard register(RegisterModel model) {
+    public ResponseModel<AccountRspModel> register(RegisterModel model) {
         User user = UserFactory.findByPhone(model.getAccount().trim());
         if (user != null) {
-            UserCard card = new UserCard();
-            card.setName("该手机号已被注册！");
-            return card;
+            //已经有账户
+            return ResponseModel.buildHaveAccountError();
         }
         user = UserFactory.findByName(model.getName().trim());
         if (user != null) {
-            UserCard card = new UserCard();
-            card.setName("该昵称已被占用！");
-            return card;
+            return ResponseModel.buildHaveNameError();
         }
+        //开始注册逻辑
         user = UserFactory.register(model.getAccount(), model.getPassword(), model.getName());
         if (user != null) {
-            UserCard card = new UserCard();
-            card.setName(user.getName());
-            card.setPhone(user.getPhone());
-            card.setSex(user.getSex());
-            card.setNotifyAt(user.getUpdateAt());
-            card.setFollow(true);
-            return card;
+            AccountRspModel rspModel = new AccountRspModel(user);
+            return ResponseModel.buildOk(rspModel);
+        } else {
+            return ResponseModel.buildRegisterError();
         }
-        return null;
     }
 }

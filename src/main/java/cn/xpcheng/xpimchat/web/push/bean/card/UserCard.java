@@ -1,5 +1,6 @@
 package cn.xpcheng.xpimchat.web.push.bean.card;
 
+import cn.xpcheng.xpimchat.web.push.bean.db.User;
 import com.google.gson.annotations.Expose;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,18 @@ public class UserCard {
     //我与当前User关系状态（是否已经关注）
     @Expose
     private boolean isFollow;
+
+    public UserCard(final User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.phone = user.getPhone();
+        this.portrait = user.getPortrait();
+        this.desc = user.getDescription();
+        this.sex = user.getSex();
+        this.notifyAt = user.getUpdateAt();
+        //TODO 得到关注人和粉丝的数量
+//        user.getFollowers().size() //会报错
+    }
 
     public String getId() {
         return id;
