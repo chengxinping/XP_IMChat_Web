@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 //实际访问路径  127.0.0.1/api/account
 @Path("/account")
-public class AccountService {
+public class AccountService extends BaseService {
 
     @POST
     @Path("/login")
@@ -79,18 +79,13 @@ public class AccountService {
     @Produces(MediaType.APPLICATION_JSON)
     //从请求头中回去token字段
     //pushId从url地址获取
-    public ResponseModel<AccountRspModel> bind(@HeaderParam("token") String token,
-                                               @PathParam("pushId") String pushId) {
+    public ResponseModel<AccountRspModel> bind(@PathParam("pushId") String pushId) {
 
-        if (Strings.isNullOrEmpty(token) || Strings.isNullOrEmpty(pushId))
+        if (Strings.isNullOrEmpty(pushId))
             return ResponseModel.buildParameterError();
 
-        User user = UserFactory.findByToken(token);
-        if (user != null) {
-            return bind(user, pushId);
-        } else
-            //token失效 无法绑定
-            return ResponseModel.buildAccountError();
+        User user = getSelf();
+        return bind(user, pushId);
     }
 
     /**
