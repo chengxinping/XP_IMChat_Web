@@ -28,8 +28,8 @@ public class AuthRequestFilter implements ContainerRequestFilter {
         String relationPath = ((ContainerRequest) requestContext).getPath(false);
         if (relationPath.startsWith("account/login") || relationPath.startsWith("account/register"))
             return;
-        String token = ((ContainerRequest) requestContext).getHeaders().getFirst("token");
-        if (Strings.isNullOrEmpty(token)) {
+        String token = requestContext.getHeaders().getFirst("token");
+        if (!Strings.isNullOrEmpty(token)) {
             final User self = UserFactory.findByToken(token);
             if (self != null) {
                 //给当前请求添加一个上下文
