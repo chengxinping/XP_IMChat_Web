@@ -1,12 +1,15 @@
 package cn.xpcheng.xpimchat.web.push.factory;
 
 import cn.xpcheng.xpimchat.web.push.bean.db.User;
+import cn.xpcheng.xpimchat.web.push.bean.db.UserFollow;
 import cn.xpcheng.xpimchat.web.push.utils.Hib;
 import cn.xpcheng.xpimchat.web.push.utils.TextUtil;
 import com.google.common.base.Strings;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author 哎呦哥哥
@@ -37,8 +40,13 @@ public class UserFactory {
                 .uniqueResult());
     }
 
+    public static User findById(String id) {
+        return Hib.query(session -> session.get(User.class, id));
+    }
+
     /**
      * 更新用户信息到数据库
+     *
      * @param user user
      * @return User
      */
@@ -172,4 +180,66 @@ public class UserFactory {
         //再进行一次对称的Base64加密
         return TextUtil.encodeBase64(password);
     }
+
+    /**
+     * 获取我的联系人列表
+     *
+     * @param self user
+     * @return List<User>
+     */
+    public static List<User> contacts(User self) {
+        return Hib.query(session -> {
+            //重新加载一次，和当前session绑定
+            session.load(self, self.getId());
+            Set<UserFollow> follows = self.getFollowing();
+            //java8类似Rxjava
+            return follows.stream()
+                    .map(UserFollow::getTarget)
+                    .collect(Collectors.toList());
+        });
+    }
+
+    /**
+     * 关注人的操作
+     *
+     * @param origin 发起者
+     * @param target 被关注人
+     * @param alias  备注
+     * @return 被关注的人
+     */
+    public static User follow(final User origin, final User target, final String alias) {
+        UserFollow userFollow = getUserFollow(origin, target);
+        if (userFollow != null)
+            return userFollow.getTarget();
+        return Hib.query(session -> {
+            session.load(origin, origin.getId());
+            session.load(target, target.getId());
+            UserFollow originFollow = new UserFollow();
+            originFollow.setOrigin(origin);
+            originFollow.setTarget(target);
+            originFollow.setAlias(alias);
+            UserFollow targetFollow = new UserFollow();
+            targetFollow.setOrigin(origin);
+            targetFollow.setTarget(target);
+
+            session.save(originFollow);
+            session.save(targetFollow);
+            return target;
+        });
+    }
+
+    /**
+     * 查询两个人是否关注
+     *
+     * @param origin 发起者
+     * @param target 被关注者
+     * @return 中间类UserFollow
+     */
+    public static UserFollow getUserFollow(final User origin, final User target) {
+        return Hib.query(session -> (UserFollow) session.createQuery("from UserFollow where originId=:originId and targetId=:targetId")
+                .setParameter("originId", origin.getId())
+                .setParameter("targetId", target.getId())
+                .uniqueResult());
+    }
+
 }
