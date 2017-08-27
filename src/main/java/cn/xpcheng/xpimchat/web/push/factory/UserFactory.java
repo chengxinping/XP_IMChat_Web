@@ -218,9 +218,10 @@ public class UserFactory {
             originFollow.setOrigin(origin);
             originFollow.setTarget(target);
             originFollow.setAlias(alias);
+            //发起者是他，我是被关注
             UserFollow targetFollow = new UserFollow();
-            targetFollow.setOrigin(origin);
-            targetFollow.setTarget(target);
+            targetFollow.setOrigin(target);
+            targetFollow.setTarget(origin);
 
             session.save(originFollow);
             session.save(targetFollow);
@@ -239,7 +240,21 @@ public class UserFactory {
         return Hib.query(session -> (UserFollow) session.createQuery("from UserFollow where originId=:originId and targetId=:targetId")
                 .setParameter("originId", origin.getId())
                 .setParameter("targetId", target.getId())
+                .setMaxResults(1)
                 .uniqueResult());
     }
 
+    /**
+     * 搜索联系人;.
+     *
+     * @param name 联系人name
+     * @return list name为空，返回最近的新用户
+     */
+    public static List<User> search(String name) {
+
+        return Hib.query(session -> (List<User>) session.createQuery("from User where lower(name) like :name and portrait is not null and description is not null ")
+                .setParameter("name", "%" + (Strings.isNullOrEmpty(name) ? "" : name) + "%")
+                // .setMaxResults(20)  //至多20条
+                .list());
+    }
 }
